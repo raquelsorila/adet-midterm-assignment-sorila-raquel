@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Tasking_CRUD.Models.TaskModel>
+
+<center>
+<a asp-action="Upsert" asp-controller="Task" style="font-family:Cambria; font-size:15px">CREATE A TASK</a> 
+</center>
+@foreach (var task in Model)
+{
+<div class="task-card" >
+    <div class="task-card--header" style="font-family:Cambria; color:black; font-size:12px">
+
+        <p style="font-size: 15px;">
+            Task Title: @Html.DisplayFor(taskItem => task.Name)<br>
+            Status: @Html.DisplayFor(taskItem => task.State)<br>
+            <a asp-action="Upsert" asp-controller="Task" asp-route-id="@task.Id" style="color:Red; "> Update </a>
+        </p>
+        <form asp-action="Delete" asp-route-id="@task.Id" method="post" style=" margin-left: 330px;">
+            <button type="submit" onclick="return confirm('Delete Task?')">Delete</button>
+        </form>
+        @if (task.State != "Done")
+        {
+            <form asp-action="ChangeState" asp-route-id="@task.Id" method="post">
+                <button type="submit">@(task.State != "To Do" ? "Done" : "Start")</button>
+                @if (task.State == "Doing")
+                {
+                    <label>Total Hours of Work:</label>
+                    <input type="text" value="0" name="totalHours" />
+                }
+            </form>
+        }
+        
+
+        <button class="details--button" onclick="toggleHide(this.id)" id="details--@task.Id"> Details </button>
+    </div>
+
+    <div class="task-card--details hidden" id="dropdown--details--@task.Id" style="font-family:Cambria; color:black; font-size:12px">
+        <span>Date Created: @Html.DisplayFor(taskItem => task.DateCreated)</span>
+        @if (task.State != "To Do")
+        {
+            <span>Date Started: @Html.DisplayFor(taskItem => task.DateStarted)</span>
+        }
+        @if(task.State == "Done")
+        {
+            <span>Date Finished: @Html.DisplayFor(taskItem => task.DateFinished)</span>
+            <span>Total Hours: @Html.DisplayFor(taskItem => task.TotalHours)</span>
+        }
+        <p>@Html.DisplayFor(taskItem => task.TaskDescription)</p>
+    </div>
+</div>   
+}
